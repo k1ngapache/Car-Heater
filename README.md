@@ -1,5 +1,7 @@
 CAR HEATER AUTOMATION – README
 
+Sorry for the swedish in advance =)
+
 Overview
 --------
 This Home Assistant blueprint automatically controls an engine heater (car heater)
