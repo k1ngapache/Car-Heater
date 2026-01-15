@@ -1,0 +1,33 @@
+type: custom:vertical-stack-in-card
+cards:
+  - type: custom:mushroom-entity-card
+    entity: input_text.bilvarmare_status
+    name: Status
+    icon: mdi:information-outline
+    fill_container: false
+  - type: custom:mushroom-entity-card
+    entity: switch.motorvarmare
+    name: Motorvärmare
+    icon: mdi:car-seat-heater
+    icon_color: orange
+    tap_action:
+      action: toggle
+  - type: custom:mushroom-entity-card
+    entity: input_boolean.bilvarmare_aktiv
+    name: Timer aktiv
+    icon: mdi:clock-check-outline
+    icon_color: green
+    tap_action:
+      action: toggle
+  - type: custom:mushroom-entity-card
+    entity: input_boolean.bilvarmare_endast_vardagar
+    name: Endast vardagar
+    icon: mdi:calendar-week
+  - type: custom:time-picker-card
+    entity: input_datetime.bilvarmare_avgangstid
+    hour_mode: 24
+    minute_step: 5
+    hide:
+      icon: false
+      seconds: true
+      name: true
