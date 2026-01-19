@@ -2,47 +2,69 @@ CAR HEATER AUTOMATION – README
 
 Sorry for the swedish in advance =)
 
+CAR HEATER AUTOMATION – README (OPTIMIZED, NO NOTIFICATIONS)
+
 Overview
 --------
-This Home Assistant blueprint automatically controls an engine heater (car heater)
-based on current outdoor temperature and a selected departure time.
-Only real-time temperature is used – no weather forecast.
+This Home Assistant blueprint controls an engine heater (car heater)
+based solely on the CURRENT outdoor temperature and a selected
+departure time.
+
+The automation is intentionally kept simple, robust, and predictable:
+- No weather forecast
+- No notifications
+- Clear and strict conditions
+
+The automation always uses TODAY'S DATE, regardless of the date stored
+in the input_datetime helper.
 
 Features
 --------
-- Uses current outdoor temperature only
-- Automatic start time based on temperature:
+- Uses real-time outdoor temperature only
+- Automatic heating duration based on temperature:
+
   < -20 °C : 3 hours
   < -10 °C : 2 hours
   <  0 °C  : 1 hour
   <  5 °C  : 30 minutes
-  >= 5 °C  : Off
-- Always uses today’s date
+  ≥  5 °C  : Heater OFF
+
+- Always uses today's date
 - Optional weekdays-only mode
-- Manual enable/disable switch
+- Manual enable/disable helper
 - Automatic stop at departure time
-- Two selectable mobile notification targets
-- Notification is sent only when the heater actually turns ON
-- Works with Home Assistant Companion App (Android & iOS)
+- No notifications
+- No weather forecast
+- Minimal service calls (only turn_on / turn_off)
+- Runs safely every minute without double switching
 
 Required Helpers
 ----------------
-- input_datetime  (departure time)
-- input_boolean   (automation enabled)
-- input_boolean   (weekdays only)
+- input_datetime  – Departure time (time only)
+- input_boolean   – Automation enabled
+- input_boolean   – Weekdays only (optional)
 
-Notifications
--------------
-The blueprint supports two notification targets.
-Each target is a notify.mobile_app_* service selected when creating the automation.
-You can select one, two, or none.
+Required Entities
+-----------------
+- Outdoor temperature sensor
+- Switch controlling the engine heater
 
 Logic Summary
 -------------
-- Automation runs every minute
-- Departure time is always interpreted as today
-- Heater starts only once per day
-- Heater stops automatically at departure time
+1. Automation runs every minute
+2. It exits immediately unless:
+   - Automation is enabled
+   - Temperature is below 5 °C
+   - Departure time is in the future
+   - Weekday requirement (if enabled) is met
+3. Heating duration is calculated from current temperature
+4. Heater turns ON once when start time is reached
+5. Heater turns OFF automatically at departure time
+
+Design Philosophy
+-----------------
+This blueprint prioritizes stability and clarity over complexity.
+The minute-based trigger is intentional and safe.
 
 Example Lovelace UI
 -------------------
@@ -55,17 +77,19 @@ Example YAML:
 type: custom:vertical-stack-in-card
 cards:
   - type: entities
+    show_header_toggle: false
     entities:
-      - input_text.bilvarmare_status
       - switch.motorvarmare
       - input_boolean.bilvarmare_aktiv
       - input_boolean.bilvarmare_endast_vardagar
+
   - type: custom:time-picker-card
     entity: input_datetime.bilvarmare_avgangstid
 
 Notes
 -----
 - Mobile-friendly UI
-- No forecast dependencies
+- No forecast usage
+- No notifications
 - Safe to reuse for multiple cars
 
